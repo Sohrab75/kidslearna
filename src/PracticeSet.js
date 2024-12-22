@@ -28,7 +28,7 @@ const PracticeSet = () => {
   return (
     <>
       <div className="m-5">
-        <h1 className="text-4xl font-extrabold mb-4">Phonics Words</h1>
+        <h1 className="text-4xl font-extrabold mb-4">Phonics WordsA</h1>
         <div className="grid grid-cols-4 gap-4">
           {Object.entries(phonicsWords).map(([key, value], index) => (
             <div
