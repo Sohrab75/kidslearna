@@ -1,0 +1,56 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up Node.js environment
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'  # Specify the Node.js version you're using
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Run tests (Optional: Use this if you have tests in your project)
+      - name: Run tests
+        run: npm test -- --coverage  # Optional step, modify according to your testing setup
+
+      # Build the React app
+      - name: Build app
+        run: npm run build
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build  # This ensures that the deploy job only runs after the build job
+
+    steps:
+      # Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Deploy to hosting platform (e.g., Netlify, Vercel, or Firebase)
+      # Example for Netlify (adjust according to the platform you're using)
+      - name: Deploy to Netlify
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          curl -sL https://github.com/netlify/cli/releases/download/v8.9.0/netlify-cli-linux-x64.tar.gz | tar xz
+          sudo mv netlify /usr/local/bin
+          netlify deploy --dir=build --prod --site=$NETLIFY_SITE_ID --auth=$NETLIFY_AUTH_TOKEN
